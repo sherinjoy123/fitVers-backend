@@ -19,6 +19,7 @@ import trainerRoutes from "./routes/trainerRoutes.js"
 import bookingRoute from "./routes/bookingRoute.js"
 import messageRoute from "./routes/messageRoute.js"
 import workoutRoute from "./routes/workoutRoute.js"
+import workoutTrackRoute from "./routes/workoutTrackRoute.js"
 
 connectDb()
 
@@ -43,6 +44,7 @@ app.use("/api/trainers", trainerRoutes)
 app.use("/api/payment", bookingRoute)
 app.use("/api/messages",messageRoute)
 app.use("/api/workouts",workoutRoute)
+app.use("/api/tracks",workoutTrackRoute)
 
 // Home route
 app.get("/", (req, res) => {
@@ -84,12 +86,15 @@ io.on("connection", (socket) => {
 
   // Video Call
   socket.on("call-user", (data) => {
-    socket.to(data.roomId).emit("incoming-call", data);
+    socket.to(data.roomId).emit("incoming-call", {
+      signal: data.signal,
+    });
   });
-
+  
   socket.on("answer-call", (data) => {
     socket.to(data.roomId).emit("call-accepted", data.signal);
   });
+
 
   socket.on("disconnect", () => {
     const userId = Object.keys(onlineUsers).find(
