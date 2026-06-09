@@ -15,8 +15,6 @@ import protect from "../middleware/authMiddleware.js"
 
 const router = express.Router()
 
-router.get("/:id",getUserId)
-
 router.post("/register", registerUser)
 
 router.post("/login", loginUser)
@@ -29,5 +27,7 @@ router.put(
   upload.single("profilePic"),
   updateProfile
 )
+
+router.get("/:id", getUserId)
 
 export default router
