@@ -1,66 +1,65 @@
-import dotenv from "dotenv"
-dotenv.config({ path: "./.env" })
-dotenv.config()
+import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
 
-import express from "express"
-import cors from "cors"
-import mongoose from "mongoose"
-import path from "path"
-import http from "http"
-import { Server } from "socket.io"
-import { fileURLToPath } from "url"
+import express from "express";
+import cors from "cors";
+import path from "path";
+import http from "http";
+import { Server } from "socket.io";
+import { fileURLToPath } from "url";
 
-import connectDb from "./config/db.js"
+import connectDb from "./config/db.js";
+import seedAdmin from "./seeders/seedAdmin.js";
 
-import authRoutes from "./routes/authRoutes.js"
-import adminRoutes from "./routes/adminRoute.js"
-import postRoutes from "./routes/postRoutes.js"
-import trainerRoutes from "./routes/trainerRoutes.js"
-import bookingRoute from "./routes/bookingRoute.js"
-import messageRoute from "./routes/messageRoute.js"
-import workoutRoute from "./routes/workoutRoute.js"
-import workoutTrackRoute from "./routes/workoutTrackRoute.js"
+import authRoutes from "./routes/authRoutes.js";
+import adminRoutes from "./routes/adminRoute.js";
+import postRoutes from "./routes/postRoutes.js";
+import trainerRoutes from "./routes/trainerRoutes.js";
+import bookingRoute from "./routes/bookingRoute.js";
+import messageRoute from "./routes/messageRoute.js";
+import workoutRoute from "./routes/workoutRoute.js";
+import workoutTrackRoute from "./routes/workoutTrackRoute.js";
 
-connectDb()
+const app = express();
 
-const app = express()
-
-// FIX __dirname for ES modules
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-// Static folder
-app.use("/uploads", express.static(path.join(__dirname, "uploads")))
+// ES Modules __dirname fix
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Middleware
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
+
+// Static Files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
-app.use("/api/auth", authRoutes)
-app.use("/api/admin", adminRoutes)
-app.use("/api/posts", postRoutes)
-app.use("/api/trainers", trainerRoutes)
-app.use("/api/payment", bookingRoute)
-app.use("/api/messages",messageRoute)
-app.use("/api/workouts",workoutRoute)
-app.use("/api/tracks",workoutTrackRoute)
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/trainers", trainerRoutes);
+app.use("/api/payment", bookingRoute);
+app.use("/api/messages", messageRoute);
+app.use("/api/workouts", workoutRoute);
+app.use("/api/tracks", workoutTrackRoute);
 
-// Home route
+// Home Route
 app.get("/", (req, res) => {
-  res.send("FitVers Backend Running")
-})
+  res.send("FitVers Backend Running");
+});
 
-// socket io
+// HTTP Server
+const server = http.createServer(app);
 
-const server = http.createServer(app)
+// Socket.IO
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: CLIENT_ORIGIN,
     methods: ["GET", "POST"],
   },
-})
+});
 
 const onlineUsers = {};
 
@@ -70,7 +69,7 @@ io.on("connection", (socket) => {
   // Chat Room Join
   socket.on("join_room", (room) => {
     socket.join(room);
-    console.log("Joined room:", room);
+    console.log("JOINED:", socket.id, "ROOM:", room);
   });
 
   // Chat Message
@@ -90,11 +89,10 @@ io.on("connection", (socket) => {
       signal: data.signal,
     });
   });
-  
+
   socket.on("answer-call", (data) => {
     socket.to(data.roomId).emit("call-accepted", data.signal);
   });
-
 
   socket.on("disconnect", () => {
     const userId = Object.keys(onlineUsers).find(
@@ -109,9 +107,23 @@ io.on("connection", (socket) => {
     console.log("User disconnected:", socket.id);
   });
 });
-// PORT
-const PORT = process.env.PORT || 4000
 
-server.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`)
-})
+const PORT = process.env.PORT || 4000;
+
+// Start Server
+const startServer = async () => {
+  try {
+    await connectDb();
+    console.log("✅ MongoDB Connected");
+
+    await seedAdmin();
+
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.log("❌ Server Startup Error:", error);
+  }
+};
+
+startServer();

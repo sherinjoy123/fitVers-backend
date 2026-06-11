@@ -22,6 +22,12 @@ router.post("/login", loginUser)
 router.get("/profile", protect, getprofile)
 
 router.put(
+  "/profile",
+  protect,
+  updateProfile
+)
+
+router.put(
   "/profilepic",
   protect,
   upload.single("profilePic"),
