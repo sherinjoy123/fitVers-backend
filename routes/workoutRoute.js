@@ -1,6 +1,6 @@
 import express from "express";
 import { addWorkout, getWorkouts, deleteWorkout } from "../controllers/workoutController.js";
-import upload from "../middleware/upload.js";
+import upload from "../config/multer.js";
 import protect from "../middleware/authMiddleware.js";
 import adminAuth from "../middleware/adminAuth.js";
 

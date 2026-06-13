@@ -8,10 +8,8 @@ const addWorkout = async (req, res) => {
 
     console.log("FILE:", req.file);
 
-    const videoUrl = req.file
-      ? `uploads/${req.file.filename}`
-      : "";
-
+    const videoUrl = req.file.path
+      
     const workout = await Workout.create({
       title,
       category,
