@@ -9,8 +9,7 @@ import {
 } from "../controllers/authController.js"
 
 
-
-import upload from "../middleware/upload.js"
+import upload from "../config/multer.js"
 import protect from "../middleware/authMiddleware.js"
 
 const router = express.Router()

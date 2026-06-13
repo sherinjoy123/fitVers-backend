@@ -105,8 +105,7 @@ const updateProfile = async (req, res) => {
     }
 
     if (req.file) {
-      user.profilePic =
-        `http://localhost:4000/uploads/${req.file.filename}`
+      user.profilePic = req.file.path;
     }
 
     const updatedUser = await user.save()
