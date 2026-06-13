@@ -13,7 +13,7 @@ const createTrainer = async (req, res) => {
     price,
     description,
     specialization,
-    experince,
+    experience,
   } = req.body
 
   try {
@@ -28,7 +28,7 @@ const createTrainer = async (req, res) => {
       phone,
       price,
       specialization,
-      experince,
+      experience,
       description,
       profilePic: req.file.path
         
@@ -90,7 +90,7 @@ const updateTrainer = async (req, res) => {
 
     // IMAGE UPDATE (SAFE)
     if (req.file ) {
-      trainer.image = req.file.path;
+      trainer.profilePic = req.file.path;
     }
 
     const updatedTrainer = await trainer.save();
