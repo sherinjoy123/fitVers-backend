@@ -81,15 +81,15 @@ const updateTrainer = async (req, res) => {
       });
     }
 
-    // SAFE UPDATES
     trainer.name = req.body.name ?? trainer.name;
     trainer.specialization = req.body.specialization ?? trainer.specialization;
     trainer.experience = req.body.experience ?? trainer.experience;
     trainer.price = req.body.price ?? trainer.price;
     trainer.description = req.body.description ?? trainer.description;
 
-    // IMAGE UPDATE (SAFE)
-    if (req.file ) {
+    // ✅ SAFE IMAGE UPDATE
+    if (req.file) {
+      console.log("NEW IMAGE:", req.file.path);
       trainer.profilePic = req.file.path;
     }
 
@@ -109,7 +109,6 @@ const updateTrainer = async (req, res) => {
     });
   }
 };
-
 
 const trainerLogin = async (req, res) => {
 
