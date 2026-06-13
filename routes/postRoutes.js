@@ -4,7 +4,7 @@ import adminAuth from "../middleware/adminAuth.js"
 import protect from "../middleware/authMiddleware.js"
 
 import { addComment, createPost, deletePost, getPosts, likePost } from "../controllers/postController.js"
-import upload from "../middleware/upload.js"
+import upload from "../config/multer.js"
 
 const router = express.Router()
 

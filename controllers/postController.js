@@ -6,14 +6,14 @@ const createPost = async (req, res) => {
     console.log(req.body);
     console.log(req.file);
     console.log(req.user);
+    
     const { title, description, mediaType } = req.body
 
     const post = await Post.create({
       title,
       description,
-      mediaUrl: req.file
-        ? `uploads/${req.file.filename}`
-        : "",
+      mediaUrl: req.file.path,
+       
       mediaType,
       createdBy: req.user?.id   // 🔥 safer access
     })
