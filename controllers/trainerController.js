@@ -30,9 +30,8 @@ const createTrainer = async (req, res) => {
       specialization,
       experince,
       description,
-      profilePic: req.file
-        ? `http://localhost:4000/uploads/${req.file.filename}`
-        : "",
+      profilePic: req.file.path
+        
     })
 
     res.status(201).json(trainer)
@@ -90,8 +89,8 @@ const updateTrainer = async (req, res) => {
     trainer.description = req.body.description ?? trainer.description;
 
     // IMAGE UPDATE (SAFE)
-    if (req.file && req.file.filename) {
-      trainer.image = `http://localhost:4000/uploads/${req.file.filename}`;
+    if (req.file ) {
+      trainer.image = req.file.path;
     }
 
     const updatedTrainer = await trainer.save();
